@@ -1,1 +1,7 @@
-Hello World from Team P?T?
+git checkout main
+git pull
+git checkout -b hello-world
+echo "Hello from P1T3" > hello-world.txt
+git add hello-world.txt
+git commit -m "Add hello-world"
+git push -u origin hello-world
