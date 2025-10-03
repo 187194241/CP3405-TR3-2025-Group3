@@ -1,0 +1,19 @@
+name: CI — PR check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Say hello
+        run: echo "CI stub OK"
