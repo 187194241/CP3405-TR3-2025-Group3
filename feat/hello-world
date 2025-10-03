@@ -1,0 +1,4 @@
+### PR: feat/hello-world
+What: add hello.md and CI stub
+Why: initial repo setup to validate CI and branch protection
+Reviewer: @teammate_github
