@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SmartSeat — Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #f5f7fb;
+      font-family: "Segoe UI", Roboto, sans-serif;
+    }
+    h2, h3 {
+      color: #0b69ff;
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background: #eef3ff;
+      color: #0b69ff;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .card {
+      background: #fff;
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      margin-top: 18px;
+    }
+    .nav-right a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .nav-right a:hover {
+      text-decoration: underline;
+    }
+    .scrollable {
+      max-height: 260px;
+      overflow-y: auto;
+      border: 1px solid #e6e9f0;
+      border-radius: 8px;
+      margin-top: 10px;
+      scrollbar-width: thin;
+      scrollbar-color: #c5d1e0 transparent;
+    }
+    .scrollable::-webkit-scrollbar {
+      width: 8px;
+    }
+    .scrollable::-webkit-scrollbar-thumb {
+      background-color: #c5d1e0;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+<header class="navbar" style="background:#0b69ff;color:white;box-shadow:0 2px 8px rgba(0,0,0,0.2)">
+  <div class="brand">
+    <div class="logo" style="background:white;color:#0b69ff;font-weight:800">A</div>
+    <div style="font-weight:600">SmartSeat Admin</div>
+  </div>
+  <div class="nav-right">
+    <a href="analytics.html">Analytics</a>
+    <a href="index.html" onclick="logoutAdmin()">Logout</a>
+  </div>
+</header>
+
+<div class="container" style="max-width:1200px;margin:auto;padding:20px">
+  <div class="card">
+    <h2>Welcome, Administrator 👋</h2>
+    <p style="color:#333;margin-top:5px">
+      Monitor SmartSeat usage, manage users, and view reservation activities in real time.
+    </p>
+  </div>
+
+  <!--  User Overview -->
+  <div class="card">
+    <h3>👥 User Overview</h3>
+    <p class="small" style="color:#666">A summary of active users and their total reservations.</p>
+    <div class="scrollable">
+      <table>
+        <tr><th>Name</th><th>Email</th><th>Reservations</th><th>Status</th></tr>
+        <tr><td>Alex Wong</td><td>alex@university.edu</td><td>3</td><td><span style="color:green">Active</span></td></tr>
+        <tr><td>Priya Tan</td><td>priya@university.edu</td><td>2</td><td><span style="color:green">Active</span></td></tr>
+        <tr><td>John Lee</td><td>john@university.edu</td><td>4</td><td><span style="color:orange">Pending</span></td></tr>
+        <tr><td>Michael Chan</td><td>mchan@university.edu</td><td>1</td><td><span style="color:red">Inactive</span></td></tr>
+        <tr><td>Rachel Lim</td><td>rlim@university.edu</td><td>5</td><td><span style="color:green">Active</span></td></tr>
+        <tr><td>Wei Zhang</td><td>wzhang@university.edu</td><td>3</td><td><span style="color:green">Active</span></td></tr>
+        <tr><td>Sarah Tan</td><td>stan@university.edu</td><td>2</td><td><span style="color:orange">Pending</span></td></tr>
+        <tr><td>Kevin Ong</td><td>kong@university.edu</td><td>4</td><td><span style="color:green">Active</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!--  Reservation Logs -->
+  <div class="card">
+    <h3>🪑 Reservation Logs</h3>
+    <p class="small" style="color:#666">Recent booking activity across venues.</p>
+    <div id="logContainer" class="scrollable" style="padding:8px 12px;background:#fcfcff"></div>
+  </div>
+
+  <!--  System Tools -->
+  <div class="card">
+    <h3>🧭 System Tools</h3>
+    <p style="color:#666">Administrative utilities for managing data and reports.</p>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px">
+      <button onclick="alert('User Management tool placeholder')">Manage User Data</button>
+      <button onclick="alert('System Maintenance placeholder')">System Maintenance</button>
+    </div>
+  </div>
+
+  <!-- 📊 Analytics -->
+  <div class="card">
+    <h3>📊 Analytics & Reports</h3>
+    <p>View detailed SmartSeat performance metrics and AI forecasts.</p>
+    <button onclick="go('analytics.html')">Open Analytics Dashboard</button>
+  </div>
+</div>
+
+<script>
+function logoutAdmin(){
+  localStorage.clear();
+  alert("Admin logged out");
+  window.location.href="index.html";
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  const logs = [
+    "LT1 - Seat A3 - Booked by Alex Wong at 09:10 AM",
+    "Seminar Room 3 - Seat B2 - Booked by Priya Tan at 10:45 AM",
+    "Campus Hall - Group Table 5 - Booked by John Lee at 11:00 AM",
+    "LT2 - Seat C1 - Booked by Rachel Lim at 12:15 PM",
+    "Seminar Room 2 - Seat D3 - Booked by Kevin Ong at 01:30 PM",
+    "LT3 - Seat E5 - Booked by Wei Zhang at 02:00 PM",
+    "Campus Hall - Table 2 - Booked by Sarah Tan at 03:15 PM",
+    "LT1 - Seat F1 - Booked by Michael Chan at 04:00 PM",
+    "Seminar Room 5 - Seat G4 - Booked by Alex Wong at 04:45 PM",
+    "LT4 - Seat A2 - Booked by Priya Tan at 05:30 PM"
+  ];
+  const container = document.getElementById("logContainer");
+  logs.forEach(l=>{
+    const div=document.createElement("div");
+    div.style.padding="6px 0";
+    div.innerHTML = `📌 <b>${l.split('-')[0]}</b> — <span>${l}</span>`;
+    container.appendChild(div);
+  });
+});
+</script>
+</body>
+</html>

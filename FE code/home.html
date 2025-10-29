@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SmartSeat — Home</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+<header class="navbar">
+  <div class="brand">
+    <div class="logo">SS</div>
+    <div style="font-weight:600">SmartSeat</div>
+  </div>
+  <div class="nav-right">
+    <a href="about.html">About</a>
+    <a href="profile.html">Profile</a>
+  </div>
+</header>
+
+<div class="container">
+  <div class="hero card">
+    <div class="left">
+      <h1>Hi Student 👋</h1>
+      <p>What would you like to do today?</p>
+      <div class="cta" style="margin-top:10px">
+        <button onclick="go('venue.html')">Book Single Seat</button>
+        <button class="green" onclick="go('venue.html')">Book Group Seat</button>
+      </div>
+
+      <div style="margin-top:14px" class="small">
+        Recent reservation: LT1 A3 (Today) • <a href="profile.html">Manage</a>
+      </div>
+    </div>
+
+    <div style="width:220px">
+      <div class="img-placeholder" style="height:160px">[Banner]</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:18px;margin-top:18px;flex-wrap:wrap">
+    <div style="flex:1;min-width:320px" class="card">
+      <h3>Popular Venues</h3>
+      <div class="venues" style="margin-top:12px">
+        <div class="venue-card">
+          <img src="" alt="">
+          <div class="meta"><h4>Lecture Theatre 1</h4><p>80 seats • Ground Floor</p></div>
+        </div>
+        <div class="venue-card">
+          <img src="" alt="">
+          <div class="meta"><h4>Lecture Theatre 2</h4><p>100 seats • Level 2</p></div>
+        </div>
+        <div class="venue-card">
+          <img src="" alt="">
+          <div class="meta"><h4>Campus Hall</h4><p>Group tables • Multi-purpose</p></div>
+        </div>
+        <div class="venue-card">
+          <img src="" alt="">
+          <div class="meta"><h4>Seminar Room 3</h4><p>40 seats • Accessible</p></div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="card side-panel" style="width:340px">
+      <h3>Quick Info</h3>
+      <div class="meta-row"><span>Time</span><strong id="nowTime"></strong></div>
+      <div class="meta-row"><span>Policy</span><span class="small">Seats hold for 10 minutes</span></div>
+      <div style="margin-top:12px">
+        <button class="btn-primary" style="background:var(--primary);padding:10px 14px;border-radius:10px;color:white" onclick="go('profile.html')">Edit Profile</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+  document.getElementById('nowTime').textContent = new Date().toLocaleString();
+</script>
+</body>
+</html>

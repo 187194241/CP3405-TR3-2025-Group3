@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SmartSeat - Analytics</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="navbar" style="background:#0b69ff;color:white">
+  <div class="brand">
+    <div class="logo" style="background:white;color:#0b69ff;font-weight:800">A</div>
+    <div style="font-weight:600">SmartSeat Admin</div>
+  </div>
+  <div class="nav-right">
+    <a href="admin.html" style="color:white">Dashboard</a>
+    <a href="index.html" style="color:white" onclick="logoutAdmin()">Logout</a>
+  </div>
+</header>
+
+  <div class="container">
+    <div class="card">
+      <h2>Seat Utilization Trends</h2>
+      <canvas id="usageChart" class="chart-container"></canvas>
+    </div>
+
+    <div class="card">
+      <h2>Single vs Group Bookings</h2>
+      <canvas id="typeChart" class="chart-container"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const ctx1 = document.getElementById('usageChart');
+    new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: ['Mon','Tue','Wed','Thu','Fri'],
+        datasets: [{
+          label: 'Utilization %',
+          data: [62, 75, 80, 67, 74],
+          borderColor: '#0B69FF',
+          tension: 0.3,
+          fill: false
+        }]
+      }
+    });
+
+    const ctx2 = document.getElementById('typeChart');
+    new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: ['Single Seats','Group Tables'],
+        datasets: [{
+          data: [70,30],
+          backgroundColor: ['#0B69FF','#34A853']
+        }]
+      }
+    });
+  </script>
+</body>
+</html>

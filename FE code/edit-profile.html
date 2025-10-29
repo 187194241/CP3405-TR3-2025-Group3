@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Edit Profile — SmartSeat</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    input, select, textarea {
+      width:100%;
+      padding:10px;
+      border-radius:8px;
+      border:1px solid #ddd;
+      margin-top:6px;
+    }
+    label {
+      font-weight:500;
+      color:#333;
+    }
+  </style>
+</head>
+<body>
+<header class="navbar">
+  <div class="brand">
+    <div class="logo">SS</div>
+    <div style="font-weight:600">SmartSeat</div>
+  </div>
+  <div class="nav-right">
+    <a href="profile.html">Back to Profile</a>
+  </div>
+</header>
+
+<div class="container">
+  <div class="card" style="max-width:600px;margin:auto;">
+    <h2>Edit Profile</h2>
+
+    <label>Full Name</label>
+    <input id="editName" type="text" placeholder="Your name">
+
+    <label>Email</label>
+    <input id="editEmail" type="email" placeholder="example@email.com">
+
+    <label>Phone Number</label>
+    <input id="editPhone" type="text" placeholder="+65 8123 4567">
+
+    <label>Student ID</label>
+    <input id="editID" type="text" placeholder="U1234567">
+
+    <label>Faculty</label>
+    <select id="editFaculty">
+      <option>School of Computing</option>
+      <option>School of Engineering</option>
+      <option>School of Business</option>
+      <option>School of Design</option>
+    </select>
+
+    <label>Course / Major</label>
+    <input id="editCourse" type="text" placeholder="e.g. Computer Science">
+
+    <label>Year of Study</label>
+    <select id="editYear">
+      <option>Year 1</option><option>Year 2</option>
+      <option>Year 3</option><option>Year 4</option>
+    </select>
+
+    <label>Gender</label>
+    <select id="editGender">
+      <option>Prefer not to say</option>
+      <option>Male</option>
+      <option>Female</option>
+      <option>Other</option>
+    </select>
+
+    <label>Profile Picture</label>
+    <input id="editAvatar" type="file" accept="image/*">
+
+    <label>About Me</label>
+    <textarea id="editBio" placeholder="Write a short introduction..." rows="3"></textarea>
+
+    <div style="margin-top:20px;display:flex;gap:10px">
+      <button class="green" onclick="saveProfile()">Save Changes</button>
+      <button class="gray" onclick="window.location.href='profile.html'">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", ()=>{
+  const user = JSON.parse(localStorage.getItem("userProfile") || 
+    '{"name":"Alex Wong","email":"alex@university.edu"}');
+  document.getElementById("editName").value = user.name || "";
+  document.getElementById("editEmail").value = user.email || "";
+});
+
+function saveProfile(){
+  const updated = {
+    name: document.getElementById("editName").value,
+    email: document.getElementById("editEmail").value,
+    phone: document.getElementById("editPhone").value,
+    id: document.getElementById("editID").value,
+    faculty: document.getElementById("editFaculty").value,
+    course: document.getElementById("editCourse").value,
+    year: document.getElementById("editYear").value,
+    gender: document.getElementById("editGender").value,
+    bio: document.getElementById("editBio").value
+  };
+  localStorage.setItem("userProfile", JSON.stringify(updated));
+  alert("Profile updated successfully!");
+  window.location.href = "profile.html";
+}
+</script>
+</body>
+</html>

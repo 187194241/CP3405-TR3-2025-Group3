@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>SmartSeat — Seat Map (Group)</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="style.css"><script src="script.js" defer></script></head>
+<body>
+<header class="navbar"><div class="brand"><div class="logo">SS</div><div style="font-weight:600">SmartSeat</div></div><div class="nav-right"><a href="home.html">Home</a><a href="profile.html">Profile</a></div></header>
+
+<div class="container">
+  <div class="grid">
+    <main>
+      <div class="card">
+        <h2>Campus Hall — Group Tables</h2>
+        <p class="small">Select a table to reserve for your team. Table capacity is shown.</p>
+        <div id="group-map" style="margin-top:12px"></div>
+
+        <div style="margin-top:12px"><button class="green" onclick="confirmTable()">Confirm Table</button> <button class="gray" onclick="go('venue.html')">Back</button></div>
+      </div>
+    </main>
+
+    <aside class="side-panel">
+      <div class="card">
+        <h3>Table Info</h3>
+        <div id="selected-info"><p class="small">No selection yet</p></div>
+        <div style="margin-top:12px">
+          <div class="meta-row"><span>Table hold</span><strong>15 min</strong></div>
+          <div class="meta-row"><span>Max size</span><strong>6 people</strong></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h4>Group Tips</h4>
+        <p class="small">Reserve early for project teams. Use the Profile page to add team members.</p>
+      </div>
+    </aside>
+  </div>
+</div>
+</body>
+</html>
