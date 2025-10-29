@@ -1,0 +1,152 @@
+/* style.css - SmartSeat V3 (inspired by airline seat maps) */
+
+/* Google font (optional) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+:root{
+  --bg:#F5F7FB;
+  --card:#FFFFFF;
+  --primary:#0B69FF; /* vivid blue */
+  --accent:#34A853;  /* green */
+  --danger:#EA4335;
+  --muted:#6B7280;
+  --shadow: 0 6px 20px rgba(11,105,255,0.08);
+  --radius:12px;
+  --maxwidth:1100px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#111;background:var(--bg);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.container{max-width:var(--maxwidth);margin:100px auto;padding:20px}
+.header-spacer{height:80px}
+
+/* NAVBAR */
+.navbar{
+  position:fixed;top:0;left:0;right:0;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:linear-gradient(180deg,var(--card),#f7f9ff);box-shadow:0 3px 10px rgba(11,105,255,0.06);z-index:999;
+}
+.navbar .brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--primary),#6EA8FF);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;
+  box-shadow: 0 6px 18px rgba(11,105,255,0.12);
+}
+.navbar .nav-right{display:flex;gap:14px;align-items:center}
+.nav-right a, .nav-right button{color:var(--muted);text-decoration:none;background:none;border:0;padding:8px 12px;border-radius:10px;cursor:pointer}
+.nav-right a:hover, .nav-right button:hover{background:rgba(11,105,255,0.06);color:var(--primary)}
+
+/* layout */
+.grid{
+  display:grid;
+  grid-template-columns: 1fr 360px;
+  gap:24px;
+  align-items:start;
+}
+@media (max-width:980px){
+  .container{padding:12px}
+  .grid{grid-template-columns:1fr; margin-top:0}
+}
+
+/* card */
+.card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+
+/* home hero */
+.hero{display:flex;gap:18px;align-items:center;justify-content:space-between;padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff,#f8fbff);box-shadow:var(--shadow)}
+.hero .left{flex:1}
+.hero h1{margin:0;font-size:22px}
+.hero p{margin:8px 0;color:var(--muted)}
+.hero .cta{display:flex;gap:12px;margin-top:12px}
+
+/* action cards */
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+.action{
+  flex:1;min-width:220px;background:linear-gradient(180deg,#fff,#fff);border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,0.04);cursor:pointer;border:1px solid rgba(11,105,255,0.06)
+}
+.action h3{margin:0 0 8px 0}
+.action p{margin:0;color:var(--muted);font-size:14px}
+.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(11,105,255,0.08);color:var(--primary);font-weight:600;font-size:13px}
+
+/* venue list */
+.venues{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (max-width:640px){.venues{grid-template-columns:1fr}}
+.venue-card{display:flex;gap:12px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg,#fff,#fff);border:1px solid rgba(0,0,0,0.04)}
+.venue-card img{width:88px;height:64px;border-radius:8px;object-fit:cover}
+.venue-card .meta h4{margin:0;font-size:16px}
+.venue-card .meta p{margin:6px 0 0 0;color:var(--muted);font-size:13px}
+
+/* seatmap area */
+.seatmap-area{display:flex;flex-direction:column;gap:12px}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.legend{display:flex;gap:10px;align-items:center}
+.legend .item{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:13px}
+.legend .dot{width:14px;height:14px;border-radius:4px}
+
+/* single seat grid */
+.seat-grid{
+  display:grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap:8px;
+  padding:12px;
+  background:linear-gradient(180deg,#fff,#fbfdff);
+  border-radius:12px;border:1px solid rgba(0,0,0,0.04)
+}
+.seat{
+  background:#efefef;border-radius:6px;display:flex;align-items:center;justify-content:center;height:36px;font-size:13px;color:#222;cursor:pointer;border:1px solid rgba(0,0,0,0.04)
+}
+.seat.available:hover{transform:translateY(-4px);box-shadow:0 10px 16px rgba(11,105,255,0.08)}
+.seat.taken{background:linear-gradient(180deg,#fb6b6b,#ea4335);color:white;cursor:not-allowed}
+.seat.selected{background:linear-gradient(180deg,#34a853,#2C9A45);color:white}
+.seat.small{height:34px;font-size:12px;padding:4px}
+
+/* group tables */
+.table-layout{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;padding:12px}
+.table{
+  width:220px;height:140px;border-radius:12px;background:linear-gradient(180deg,#fff,#fff);display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,0.04);cursor:pointer
+}
+.table.taken{opacity:0.55;cursor:not-allowed}
+.table .title{font-weight:600;margin-bottom:6px}
+
+/* side panel (details) */
+.side-panel{position:sticky;top:92px}
+.side-panel .card{padding:18px}
+.side-panel h3{margin-top:0}
+.meta-row{display:flex;justify-content:space-between;padding:8px 0;border-top:1px dashed rgba(0,0,0,0.03);color:var(--muted);font-size:14px}
+
+/* footer / small */
+.small{font-size:13px;color:var(--muted)}
+
+/* responsive tweaks */
+@media (max-width:980px){
+  .seat-grid{grid-template-columns: repeat(8,1fr)}
+}
+@media (max-width:640px){
+  .nav-right{display:none}
+  .navbar{padding:14px}
+  .seat-grid{grid-template-columns: repeat(6,1fr)}
+  .container{margin:80px 12px}
+}
+
+/* --- Improved Buttons --- */
+button {
+  background: linear-gradient(135deg, #0B69FF, #0078E7);
+  border: none;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+button.green {
+  background: linear-gradient(135deg, #1CC88A, #16A085);
+}
+button.red {
+  background: linear-gradient(135deg, #E74C3C, #C0392B);
+}
+button.gray {
+  background: #ECECEC;
+  color: #444;
+}
