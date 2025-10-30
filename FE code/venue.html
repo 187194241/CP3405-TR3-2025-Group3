@@ -1,27 +1,79 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><title>SmartSeat — Venues</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="style.css"><script src="script.js" defer></script></head>
+<head>
+  <meta charset="utf-8">
+  <title>SmartSeat — Venues</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+
 <body>
-<header class="navbar"><div class="brand"><div class="logo">SS</div><div style="font-weight:600">SmartSeat</div></div>
-  <div class="nav-right"><a href="about.html">About</a><a href="profile.html">Profile</a></div></header>
+<header class="navbar">
+  <div class="brand">
+    <div class="logo">SS</div>
+    <div style="font-weight:600">SmartSeat</div>
+  </div>
+  <div class="nav-right">
+    <a href="about.html">About</a>
+    <a href="profile.html">Profile</a>
+  </div>
+</header>
 
 <div class="container">
   <div class="card">
     <h2>Choose a Venue</h2>
     <p class="small">Search or pick from the list below</p>
+
     <div style="margin-top:12px;display:flex;gap:8px">
       <input placeholder="Search venue" style="flex:1;padding:10px;border-radius:8px;border:1px solid #e6eefc">
       <button onclick="go('seatmap-single.html')">Search</button>
     </div>
 
     <div style="margin-top:14px" class="venues">
-      <div class="venue-card"><img src="" alt=""><div class="meta"><h4>Lecture Theatre 1</h4><p>80 seats • <span class="badge">Real-time</span></p><div style="margin-top:8px"><button onclick="go('seatmap-single.html')" style="padding:8px 12px;border-radius:8px">View Seats</button></div></div></div>
+      <div class="venue-card">
+        <img src="images/Lecture Theatre.jpeg" alt="Lecture Theatre 1">
+        <div class="meta">
+          <h4>Lecture Theatre 1</h4>
+          <p>80 seats • <span class="badge">Real-time</span></p>
+          <div style="margin-top:8px">
+            <button onclick="go('seatmap-single.html')" style="padding:8px 12px;border-radius:8px">View Seats</button>
+          </div>
+        </div>
+      </div>
 
-      <div class="venue-card"><img src="" alt=""><div class="meta"><h4>Lecture Theatre 2</h4><p>100 seats</p><div style="margin-top:8px"><button onclick="go('seatmap-single.html')" style="padding:8px 12px;border-radius:8px">View Seats</button></div></div></div>
+      <div class="venue-card">
+        <img src="images/Lecture Theatre.jpeg" alt="Lecture Theatre 2">
+        <div class="meta">
+          <h4>Lecture Theatre 2</h4>
+          <p>100 seats</p>
+          <div style="margin-top:8px">
+            <button onclick="go('seatmap-single.html')" style="padding:8px 12px;border-radius:8px">View Seats</button>
+          </div>
+        </div>
+      </div>
 
-      <div class="venue-card"><img src="" alt=""><div class="meta"><h4>Campus Hall</h4><p>Group tables</p><div style="margin-top:8px"><button onclick="go('seatmap-group.html')" style="padding:8px 12px;border-radius:8px">View Group Tables</button></div></div></div>
+      <div class="venue-card">
+        <img src="images/Campus Hall.jpg" alt="Campus Hall">
+        <div class="meta">
+          <h4>Campus Hall</h4>
+          <p>Group tables</p>
+          <div style="margin-top:8px">
+            <button onclick="go('seatmap-group.html')" style="padding:8px 12px;border-radius:8px">View Group Tables</button>
+          </div>
+        </div>
+      </div>
 
-      <div class="venue-card"><img src="" alt=""><div class="meta"><h4>Seminar Room 3</h4><p>40 seats • Accessible</p><div style="margin-top:8px"><button onclick="go('seatmap-single.html')" style="padding:8px 12px;border-radius:8px">View Seats</button></div></div></div>
+      <div class="venue-card">
+        <img src="images/Library.jpg" alt="Library">
+        <div class="meta">
+          <h4>Library</h4>
+          <p>60 seats • Accessible</p>
+          <div style="margin-top:8px">
+            <button onclick="go('seatmap-single.html')" style="padding:8px 12px;border-radius:8px">View Seats</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
