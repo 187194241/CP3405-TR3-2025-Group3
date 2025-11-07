@@ -6,90 +6,106 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      background: #f5f7fb;
-      font-family: "Segoe UI", Roboto, sans-serif;
+    body { background:#f5f7fb; font-family:"Segoe UI",sans-serif; color:#333; }
+    header.navbar {
+      background:#0b69ff; 
+      color:white; 
+      padding:12px 24px;
+      display:flex; 
+      justify-content:space-between; 
+      align-items:center;
+      box-shadow:0 2px 8px rgba(0,0,0,0.15);
     }
-    h2, h3 {
-      color: #0b69ff;
-      margin-bottom: 10px;
+    .brand { 
+      display:flex; 
+      align-items:center; 
+      gap:8px; 
+      font-weight:600; 
+      font-size:18px; 
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    th, td {
-      padding: 10px 12px;
-      border-bottom: 1px solid #eee;
-    }
-    th {
-      background: #eef3ff;
-      color: #0b69ff;
-      font-weight: 600;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-    .card {
-      background: #fff;
-      padding: 18px;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      margin-top: 18px;
+    .brand .logo {
+      background:white; 
+      color:#0b69ff; 
+      font-weight:800; 
+      padding:6px 10px; 
+      border-radius:6px;
     }
     .nav-right a {
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
+      color:white; 
+      margin-left:18px; 
+      text-decoration:none; 
+      font-weight:500;
+      transition:opacity 0.2s;
     }
-    .nav-right a:hover {
-      text-decoration: underline;
+    .nav-right a:hover { opacity:0.8; }
+    .container { 
+      max-width:1200px; 
+      margin:auto; 
+      padding:20px; 
     }
-    .scrollable {
-      max-height: 260px;
-      overflow-y: auto;
-      border: 1px solid #e6e9f0;
-      border-radius: 8px;
-      margin-top: 10px;
-      scrollbar-width: thin;
-      scrollbar-color: #c5d1e0 transparent;
+    .card {
+      background:white; 
+      padding:18px 20px; 
+      border-radius:12px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.08); 
+      margin-top:18px;
     }
-    .scrollable::-webkit-scrollbar {
-      width: 8px;
+    .scrollable { 
+      max-height:260px; 
+      overflow-y:auto; 
+      border:1px solid #e6e9f0; 
+      border-radius:8px; 
+      margin-top:10px; 
     }
-    .scrollable::-webkit-scrollbar-thumb {
-      background-color: #c5d1e0;
-      border-radius: 10px;
+    table { 
+      width:100%; 
+      border-collapse:collapse; 
+    }
+    th, td { 
+      padding:10px 12px; 
+      border-bottom:1px solid #eee; 
+    }
+    th { 
+      background:#eef3ff; 
+      color:#0b69ff; 
+      font-weight:600; 
+      position:sticky; 
+      top:0; 
+      z-index:1; 
+    }
+    button {
+      background:#0b69ff; 
+      color:white; border:none;
+      border-radius:8px;
+      padding:10px 14px; 
+      font-weight:500; 
+      cursor:pointer;
+      transition:background 0.2s, transform 0.1s;
+    }
+    button:hover { 
+      background:#084ec1; 
+      transform:translateY(-1px); 
     }
   </style>
 </head>
 <body>
-<header class="navbar" style="background:#0b69ff;color:white;box-shadow:0 2px 8px rgba(0,0,0,0.2)">
-  <div class="brand">
-    <div class="logo" style="background:white;color:#0b69ff;font-weight:800">A</div>
-    <div style="font-weight:600">SmartSeat Admin</div>
-  </div>
+<header class="navbar">
+  <div class="brand"><div class="logo">A</div>SmartSeat Admin</div>
   <div class="nav-right">
     <a href="analytics.html">Analytics</a>
     <a href="index.html" onclick="logoutAdmin()">Logout</a>
   </div>
 </header>
 
-<div class="container" style="max-width:1200px;margin:auto;padding:20px">
+<div class="container">
   <div class="card">
     <h2>Welcome, Administrator 👋</h2>
-    <p style="color:#333;margin-top:5px">
-      Monitor SmartSeat usage, manage users, and view reservation activities in real time.
-    </p>
+    <p>Monitor SmartSeat usage, manage users, and perform maintenance tasks.</p>
   </div>
 
-  <!--  User Overview -->
   <div class="card">
     <h3>👥 User Overview</h3>
-    <p class="small" style="color:#666">A summary of active users and their total reservations.</p>
+    <p>A summary of active users and their reservations.</p>
     <div class="scrollable">
       <table>
         <tr><th>Name</th><th>Email</th><th>Reservations</th><th>Status</th></tr>
@@ -105,36 +121,30 @@
     </div>
   </div>
 
-  <!--  Reservation Logs -->
   <div class="card">
     <h3>🪑 Reservation Logs</h3>
-    <p class="small" style="color:#666">Recent booking activity across venues.</p>
-    <div id="logContainer" class="scrollable" style="padding:8px 12px;background:#fcfcff"></div>
+    <p>Recent booking activity across venues.</p>
+    <div class="scrollable" id="logContainer" style="padding:8px 12px;background:#fcfcff"></div>
   </div>
 
-  <!--  System Tools -->
   <div class="card">
     <h3>🧭 System Tools</h3>
-    <p style="color:#666">Administrative utilities for managing data and reports.</p>
+    <p>Administrative utilities for managing data and system status.</p>
     <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px">
-      <button onclick="alert('User Management tool placeholder')">Manage User Data</button>
-      <button onclick="alert('System Maintenance placeholder')">System Maintenance</button>
+      <button onclick="go('manage-user.html')">Manage User Data</button>
+      <button onclick="go('maintenance.html')">System Maintenance</button>
     </div>
-  </div>
-
-  <!-- 📊 Analytics -->
-  <div class="card">
-    <h3>📊 Analytics & Reports</h3>
-    <p>View detailed SmartSeat performance metrics and AI forecasts.</p>
-    <button onclick="go('analytics.html')">Open Analytics Dashboard</button>
   </div>
 </div>
 
 <script>
 function logoutAdmin(){
-  localStorage.clear();
-  alert("Admin logged out");
-  window.location.href="index.html";
+  alert("Admin logged out.");
+  window.location.href = "index.html";
+}
+
+function go(page){
+  window.location.href = page;
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
@@ -154,7 +164,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   logs.forEach(l=>{
     const div=document.createElement("div");
     div.style.padding="6px 0";
-    div.innerHTML = `📌 <b>${l.split('-')[0]}</b> — <span>${l}</span>`;
+    div.innerHTML = `📌 ${l}`;
     container.appendChild(div);
   });
 });
