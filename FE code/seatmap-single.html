@@ -1,26 +1,92 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><title>SmartSeat — Seat Map (Single)</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="style.css"><script src="script.js" defer></script></head>
+<head>
+  <meta charset="utf-8">
+  <title>SmartSeat — Single Seats</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background:#f6f8fc;
+      font-family:"Segoe UI",Roboto,sans-serif;
+    }
+    .seat {
+      display:inline-block;
+      width:36px;
+      height:36px;
+      margin:5px;
+      border-radius:8px;
+      border:1px solid #ccd6f6;
+      background:#e8eefc;
+      cursor:pointer;
+      transition:all .2s;
+    }
+    .seat:hover { background:#d9e5ff; }
+    .seat.selected { background:#34A853; color:white; }
+    .seat.occupied { background:#ea4335; color:white; cursor:not-allowed; }
+
+    /* Modal overlay */
+    .modal {
+      display:none;
+      position:fixed;
+      top:0;left:0;right:0;bottom:0;
+      background:rgba(0,0,0,0.45);
+      justify-content:center;
+      align-items:center;
+      z-index:1000;
+    }
+    .modal-content {
+      background:#fff;
+      border-radius:12px;
+      width:420px;
+      padding:22px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.25);
+      max-height:80vh;
+      overflow-y:auto;
+    }
+    .modal-content h3 { margin-top:0;color:#0b69ff; }
+    .close-btn {
+      float:right;
+      cursor:pointer;
+      font-weight:bold;
+      color:#888;
+    }
+    .close-btn:hover { color:#000; }
+  </style>
+</head>
 <body>
-<header class="navbar"><div class="brand"><div class="logo">SS</div><div style="font-weight:600">SmartSeat</div></div><div class="nav-right"><a href="home.html">Home</a><a href="profile.html">Profile</a></div></header>
+
+<header class="navbar">
+  <div class="brand">
+    <div class="logo">SS</div>
+    <div style="font-weight:600">SmartSeat</div>
+  </div>
+  <div class="nav-right">
+    <a href="venue.html">Back</a>
+    <a href="profile.html">Profile</a>
+  </div>
+</header>
 
 <div class="container">
   <div class="grid">
     <main>
       <div class="card">
         <h2>Lecture Theatre 1 — Single Seats</h2>
-        <div class="controls">
-          <div class="legend">
-            <div class="item"><span class="dot" style="background:#efefef;border-radius:4px;width:14px;height:14px;border:1px solid #ddd"></span> <span class="small">Available</span></div>
-            <div class="item"><span class="dot" style="background:#ea4335"></span> <span class="small">Occupied</span></div>
-            <div class="item"><span class="dot" style="background:#34A853"></span> <span class="small">Selected</span></div>
-            <div class="item"><span class="dot" style="background:#F6C85F"></span> <span class="small">Reserved</span></div>
-          </div>
-          <div style="flex:1"></div>
-          <div><button onclick="confirmSingle()">Confirm Selection</button></div>
+        <div class="legend" style="margin-bottom:10px">
+        <div class="legend">
+        <div class="item"><span class="dot" style="background:#efefef;border-radius:4px;width:14px;height:14px;border:1px solid #ddd"></span> <span class="small">Available</span></div>
+        <div class="item"><span class="dot" style="background:#ea4335"></span> <span class="small">Occupied</span></div>
+        <div class="item"><span class="dot" style="background:#34A853"></span> <span class="small">Selected</span></div>
+        <div class="item"><span class="dot" style="background:#F6C85F"></span> <span class="small">Reserved</span></div>
+        </div>
         </div>
 
-        <div id="single-map" style="margin-top:12px"></div>
+        <div id="seat-map" style="margin-top:12px;text-align:center"></div>
+
+        <div style="margin-top:12px">
+          <button class="green" onclick="confirmSeat()">Confirm Selection</button>
+          <button class="gray" onclick="go('venue.html')">Back</button>
+        </div>
       </div>
     </main>
 
@@ -32,6 +98,9 @@
           <div class="meta-row"><span>Hold time</span><strong>10 min</strong></div>
           <div class="meta-row"><span>Policy</span><span class="small">No seat-hogging</span></div>
         </div>
+        <div style="margin-top:12px;text-align:right">
+          <button id="viewDetailsBtn" class="gray" style="display:none" onclick="openModal()">View Details</button>
+        </div>
       </div>
 
       <div class="card" style="margin-top:12px">
@@ -42,5 +111,79 @@
     </aside>
   </div>
 </div>
+
+<!-- Modal -->
+<div class="modal" id="detailsModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <h3>Seat Details</h3>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<script>
+const map = document.getElementById("seat-map");
+const info = document.getElementById("selected-info");
+const modal = document.getElementById("detailsModal");
+const detail = document.getElementById("detailContent");
+const btn = document.getElementById("viewDetailsBtn");
+let selectedSeat = null;
+
+for(let i=1;i<=48;i++){
+  const seat=document.createElement("div");
+  seat.className="seat";
+  if(Math.random()<0.15) seat.classList.add("occupied");
+  seat.addEventListener("click",()=>{
+    if(seat.classList.contains("occupied")) return;
+    document.querySelectorAll(".seat").forEach(s=>s.classList.remove("selected"));
+    seat.classList.add("selected");
+
+    selectedSeat = {
+      id: i,
+      row: String.fromCharCode(65 + Math.floor(i/8)),
+      col: (i%8)+1,
+      near: ["Aisle","Window","Center"][i%3],
+      light: ["Bright","Normal","Dim"][Math.floor(Math.random()*3)],
+      power: Math.random()<0.7?"Yes":"No",
+      noise: ["Quiet","Moderate","Lively"][Math.floor(Math.random()*3)]
+    };
+
+    info.innerHTML = `<p class="small">Selected seat: <strong>${selectedSeat.row}${selectedSeat.col}</strong></p>
+                      <p class="small">Near: ${selectedSeat.near} | Power: ${selectedSeat.power}</p>`;
+    btn.style.display="inline-block";
+  });
+  map.appendChild(seat);
+}
+
+function openModal(){
+  if(selectedSeat){
+    detail.innerHTML = `
+      <p><strong>Seat:</strong> ${selectedSeat.row}${selectedSeat.col}</p>
+      <p><strong>Location:</strong> ${selectedSeat.near}</p>
+      <p><strong>Lighting:</strong> ${selectedSeat.light}</p>
+      <p><strong>Power Outlet:</strong> ${selectedSeat.power}</p>
+      <p><strong>Noise Level:</strong> ${selectedSeat.noise}</p>
+      <hr>
+      <p><strong>Previous Usage:</strong></p>
+      <ul style="margin-left:20px">
+        <li>12 Nov — Reserved by Alex Wong</li>
+        <li>13 Nov — Available (No record)</li>
+      </ul>`;
+    modal.style.display="flex";
+  }
+}
+
+function closeModal(){ modal.style.display="none"; }
+
+function confirmSeat(){
+  if(selectedSeat){
+    alert(`Seat ${selectedSeat.row}${selectedSeat.col} confirmed.`);
+    localStorage.setItem("seat", selectedSeat.row+selectedSeat.col);
+    window.location.href="seatdetail.html";
+  } else {
+    alert("Please select a seat first.");
+  }
+}
+</script>
 </body>
 </html>
