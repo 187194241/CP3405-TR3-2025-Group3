@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SmartSeat — Library Seat Map</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #f5f8fb;
+      font-family: "Segoe UI", Roboto, sans-serif;
+    }
+
+    .seat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .seat {
+      background: #e8eefc;
+      border-radius: 8px;
+      padding: 18px 0;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+      border: 1px solid #ccd6f6;
+    }
+    .seat:hover { background: #d9e5ff; }
+    .seat.selected { background: #34A853; color: white; border-color: #34A853; }
+    .seat.occupied { background: #ea4335; color: white; cursor: not-allowed; }
+
+    .floor-tabs {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .floor-tabs button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: #e6ebf7;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-weight: 500;
+    }
+
+    .floor-tabs button.active {
+      background: #0b69ff;
+      color: white;
+    }
+
+    .legend {
+      display: flex;
+      gap: 14px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .legend .item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+    }
+
+    .legend .dot {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+    }
+
+    /* Modal Overlay */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.45);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 12px;
+      width: 420px;
+      padding: 22px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal-content h3 { margin-top: 0; color: #0b69ff; }
+    .close-btn {
+      float: right;
+      cursor: pointer;
+      font-weight: bold;
+      color: #888;
+    }
+    .close-btn:hover { color: #000; }
+  </style>
+</head>
+
+<body>
+<header class="navbar">
+  <div class="brand">
+    <div class="logo">SS</div>
+    <div style="font-weight:600">SmartSeat</div>
+  </div>
+  <div class="nav-right">
+    <a href="venue.html">Back</a>
+    <a href="profile.html">Profile</a>
+  </div>
+</header>
+
+<div class="container">
+  <div class="grid">
+    <main>
+      <div class="card">
+        <h2>Library — Quiet Study Area</h2>
+        <p class="small">Select a seat on your preferred floor.</p>
+
+        <div class="floor-tabs">
+          <button id="floor1Btn" class="active" onclick="switchFloor(1)">1st Floor</button>
+          <button id="floor2Btn" onclick="switchFloor(2)">2nd Floor</button>
+        </div>
+
+        <div class="legend">
+          <div class="item"><span class="dot" style="background:#e8eefc;border:1px solid #ccd6f6"></span> Available</div>
+          <div class="item"><span class="dot" style="background:#ea4335"></span> Occupied</div>
+          <div class="item"><span class="dot" style="background:#34A853"></span> Selected</div>
+          <div class="item"><span class="dot" style="background:#F6C85F"></span> Reserved</div>
+        </div>
+
+        <div id="seatGrid" class="seat-grid"></div>
+
+        <div style="margin-top:18px;text-align:right">
+          <button id="confirmBtn" disabled style="padding:10px 16px;border-radius:8px;background:#0b69ff;color:white;border:none;cursor:pointer;opacity:0.6">Confirm Reservation</button>
+        </div>
+      </div>
+    </main>
+
+    <aside class="side-panel">
+      <div class="card">
+        <h3>Seat Info</h3>
+        <div id="selected-info"><p class="small">No selection yet</p></div>
+        <div style="margin-top:12px">
+          <div class="meta-row"><span>Floor</span><strong id="floorLabel">1</strong></div>
+          <div class="meta-row"><span>Hold time</span><strong>10 min</strong></div>
+        </div>
+        <div style="margin-top:12px;text-align:right">
+          <button id="viewDetailsBtn" class="gray" style="display:none" onclick="openModal()">View Details</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h4>Accessibility</h4>
+        <p class="small">Accessible seats available on 1st Floor near entrance.</p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="detailsModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <h3>Seat Details</h3>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<script>
+let currentFloor = 1;
+let selectedSeat = null;
+const seatGrid = document.getElementById('seatGrid');
+const confirmBtn = document.getElementById('confirmBtn');
+const info = document.getElementById('selected-info');
+const floorLabel = document.getElementById('floorLabel');
+const modal = document.getElementById('detailsModal');
+const detailContent = document.getElementById('detailContent');
+const viewDetailsBtn = document.getElementById('viewDetailsBtn');
+
+function generateSeats(floor) {
+  seatGrid.innerHTML = '';
+  const totalSeats = floor === 1 ? 48 : 36;
+  const occupiedSeats = Array.from({length: 8}, () => Math.floor(Math.random() * totalSeats) + 1);
+  for (let i = 1; i <= totalSeats; i++) {
+    const seat = document.createElement('div');
+    seat.className = 'seat';
+    seat.textContent = i;
+    if (occupiedSeats.includes(i)) {
+      seat.classList.add('occupied');
+    } else {
+      seat.addEventListener('click', () => {
+        document.querySelectorAll('.seat').forEach(s => s.classList.remove('selected'));
+        seat.classList.add('selected');
+        selectedSeat = {
+          id: i,
+          floor,
+          near: ["Window", "Bookshelf", "Entrance"][i % 3],
+          noise: ["Silent", "Quiet", "Moderate"][Math.floor(Math.random() * 3)],
+          light: ["Natural", "LED", "Dim"][Math.floor(Math.random() * 3)],
+          power: Math.random() < 0.7 ? "Yes" : "No"
+        };
+        info.innerHTML = `<p class="small">Selected seat: <strong>#${i}</strong> (Floor ${floor})</p>
+                          <p class="small">Near: ${selectedSeat.near} | Power: ${selectedSeat.power}</p>`;
+        confirmBtn.disabled = false;
+        confirmBtn.style.opacity = 1;
+        viewDetailsBtn.style.display = "inline-block";
+      });
+    }
+    seatGrid.appendChild(seat);
+  }
+}
+
+function switchFloor(floor) {
+  currentFloor = floor;
+  floorLabel.textContent = floor;
+  document.getElementById('floor1Btn').classList.toggle('active', floor === 1);
+  document.getElementById('floor2Btn').classList.toggle('active', floor === 2);
+  generateSeats(floor);
+  selectedSeat = null;
+  info.innerHTML = `<p class="small">No selection yet</p>`;
+  confirmBtn.disabled = true;
+  confirmBtn.style.opacity = 0.6;
+  viewDetailsBtn.style.display = "none";
+}
+
+function openModal() {
+  if (selectedSeat) {
+    detailContent.innerHTML = `
+      <p><strong>Seat ID:</strong> #${selectedSeat.id}</p>
+      <p><strong>Floor:</strong> ${selectedSeat.floor}</p>
+      <p><strong>Near:</strong> ${selectedSeat.near}</p>
+      <p><strong>Noise Level:</strong> ${selectedSeat.noise}</p>
+      <p><strong>Lighting:</strong> ${selectedSeat.light}</p>
+      <p><strong>Power Outlet:</strong> ${selectedSeat.power}</p>
+      <hr>
+      <p><strong>Last Used:</strong> 11 Nov, 14:00–16:00 by Alex Wong</p>
+      <p><strong>Usage Type:</strong> Study</p>`;
+    modal.style.display = "flex";
+  }
+}
+
+function closeModal() { modal.style.display = "none"; }
+
+confirmBtn.addEventListener('click', () => {
+  if (selectedSeat) {
+    localStorage.setItem('selectedSeat', `Library Floor ${currentFloor} - Seat #${selectedSeat.id}`);
+    alert(`You reserved seat #${selectedSeat.id} on Floor ${currentFloor}`);
+    window.location.href = 'seatdetail.html';
+  }
+});
+
+generateSeats(1);
+</script>
+</body>
+</html>

@@ -1,8 +1,72 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><title>SmartSeat — Seat Map (Group)</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="style.css"><script src="script.js" defer></script></head>
+<head>
+  <meta charset="utf-8">
+  <title>SmartSeat — Group Tables</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background:#f6f8fc;
+      font-family:"Segoe UI",Roboto,sans-serif;
+    }
+    .table {
+      display:inline-block;
+      background:#e8eefc;
+      border:1px solid #ccd6f6;
+      border-radius:10px;
+      padding:25px 0;
+      width:120px;
+      text-align:center;
+      margin:8px;
+      cursor:pointer;
+      transition:all .2s;
+    }
+    .table:hover { background:#d9e5ff; }
+    .table.selected { background:#34A853; color:white; }
+    .table.occupied { background:#ea4335; color:white; cursor:not-allowed; }
+
+    /* Modal overlay */
+    .modal {
+      display:none;
+      position:fixed;
+      top:0;left:0;right:0;bottom:0;
+      background:rgba(0,0,0,0.45);
+      justify-content:center;
+      align-items:center;
+      z-index:1000;
+    }
+    .modal-content {
+      background:#fff;
+      border-radius:12px;
+      width:420px;
+      padding:22px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.25);
+      max-height:80vh;
+      overflow-y:auto;
+    }
+    .modal-content h3 { margin-top:0;color:#0b69ff; }
+    .close-btn {
+      float:right;
+      cursor:pointer;
+      font-weight:bold;
+      color:#888;
+    }
+    .close-btn:hover { color:#000; }
+  </style>
+</head>
 <body>
-<header class="navbar"><div class="brand"><div class="logo">SS</div><div style="font-weight:600">SmartSeat</div></div><div class="nav-right"><a href="home.html">Home</a><a href="profile.html">Profile</a></div></header>
+
+<header class="navbar">
+  <div class="brand">
+    <div class="logo">SS</div>
+    <div style="font-weight:600">SmartSeat</div>
+  </div>
+  <div class="nav-right">
+    <a href="venue.html">Back</a>
+    <a href="profile.html">Profile</a>
+  </div>
+</header>
 
 <div class="container">
   <div class="grid">
@@ -10,9 +74,13 @@
       <div class="card">
         <h2>Campus Hall — Group Tables</h2>
         <p class="small">Select a table to reserve for your team. Table capacity is shown.</p>
-        <div id="group-map" style="margin-top:12px"></div>
 
-        <div style="margin-top:12px"><button class="green" onclick="confirmTable()">Confirm Table</button> <button class="gray" onclick="go('venue.html')">Back</button></div>
+        <div id="group-map" style="margin-top:12px;text-align:center"></div>
+
+        <div style="margin-top:12px">
+          <button class="green" onclick="confirmTable()">Confirm Table</button>
+          <button class="gray" onclick="go('venue.html')">Back</button>
+        </div>
       </div>
     </main>
 
@@ -22,7 +90,10 @@
         <div id="selected-info"><p class="small">No selection yet</p></div>
         <div style="margin-top:12px">
           <div class="meta-row"><span>Table hold</span><strong>15 min</strong></div>
-          <div class="meta-row"><span>Max size</span><strong>6 people</strong></div>
+          <div class="meta-row"><span>Max size</span><strong id="maxSize">–</strong></div>
+        </div>
+        <div style="margin-top:12px;text-align:right">
+          <button id="viewDetailsBtn" class="gray" style="display:none" onclick="openModal()">View Details</button>
         </div>
       </div>
 
@@ -33,5 +104,87 @@
     </aside>
   </div>
 </div>
+
+<!-- Modal -->
+<div class="modal" id="detailsModal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <h3>Table Details</h3>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<script>
+const map = document.getElementById("group-map");
+const info = document.getElementById("selected-info");
+const maxSizeEl = document.getElementById("maxSize");
+const modal = document.getElementById("detailsModal");
+const detailContent = document.getElementById("detailContent");
+let selectedTable = null;
+
+const tables = [
+  {id:1,capacity:4,near:"Projector",noise:"Medium",power:"Yes",status:"Available"},
+  {id:2,capacity:6,near:"Window",noise:"Low",power:"Yes",status:"Occupied"},
+  {id:3,capacity:6,near:"Whiteboard",noise:"Medium",power:"No",status:"Available"},
+  {id:4,capacity:8,near:"Center",noise:"High",power:"Yes",status:"Available"},
+  {id:5,capacity:4,near:"Door",noise:"Medium",power:"No",status:"Available"},
+  {id:6,capacity:6,near:"Corner",noise:"Quiet",power:"Yes",status:"Available"}
+];
+
+tables.forEach(tbl=>{
+  const div=document.createElement("div");
+  div.className="table";
+  div.textContent="Table "+tbl.id;
+  if(tbl.status==="Occupied"){
+    div.classList.add("occupied");
+  } else {
+    div.addEventListener("click",()=>{
+      document.querySelectorAll(".table").forEach(t=>t.classList.remove("selected"));
+      div.classList.add("selected");
+      selectedTable = tbl;
+      info.innerHTML = `<p class="small">Selected: <strong>Table ${tbl.id}</strong></p>
+                        <p class="small">Capacity: ${tbl.capacity} | Near: ${tbl.near}</p>`;
+      maxSizeEl.textContent = tbl.capacity;
+      document.getElementById("viewDetailsBtn").style.display="inline-block";
+    });
+  }
+  map.appendChild(div);
+});
+
+function openModal(){
+  if(selectedTable){
+    detailContent.innerHTML = `
+      <p><strong>ID:</strong> Table ${selectedTable.id}</p>
+      <p><strong>Capacity:</strong> ${selectedTable.capacity} people</p>
+      <p><strong>Near:</strong> ${selectedTable.near}</p>
+      <p><strong>Noise Level:</strong> ${selectedTable.noise}</p>
+      <p><strong>Power Outlets:</strong> ${selectedTable.power}</p>
+      <p><strong>Recommended Use:</strong> ${selectedTable.capacity>5?"Team meetings":"Pair study"}</p>
+      <p><strong>Lighting:</strong> ${selectedTable.near==="Window"?"Natural light":"Artificial light"}</p>
+      <p><strong>Status:</strong> ${selectedTable.status}</p>
+      <hr>
+      <p><strong>Reservation History:</strong></p>
+      <ul style="margin-left:20px">
+        <li>11 Nov, 10:00–12:00 — Alex Wong</li>
+        <li>12 Nov, 14:00–16:00 — John Lee</li>
+      </ul>`;
+    modal.style.display="flex";
+  }
+}
+
+function closeModal(){
+  modal.style.display="none";
+}
+
+function confirmTable(){
+  if(selectedTable){
+    alert(`You reserved Table ${selectedTable.id} for your team.`);
+    localStorage.setItem("selectedTable", selectedTable.id);
+    window.location.href="seatdetail.html";
+  } else {
+    alert("Please select a table first.");
+  }
+}
+</script>
 </body>
 </html>
