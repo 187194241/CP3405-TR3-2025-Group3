@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SmartSeat — Reservation Details</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body{
+      background:#f6f8fc;
+      font-family:"Segoe UI",Roboto,sans-serif;
+    }
+    .details-grid{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .badge{
+      display:inline-block;
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:12px;
+      background:#e3ebff;
+      color:#1f3bb3;
+    }
+    .value{
+      font-weight:600;
+    }
+  </style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="brand">
+    <div class="logo">SS</div>
+    <div style="font-weight:600">SmartSeat</div>
+  </div>
+  <div class="nav-right">
+    <a href="venue.html">Venues</a>
+    <a href="profile.html">Profile</a>
+  </div>
+</header>
+
+<div class="container">
+  <div class="grid">
+    <main>
+      <div class="card">
+        <h2>Reservation Details</h2>
+        <p class="small">Here is the summary of your latest reservation.</p>
+
+        <div id="statusBox" style="margin-top:10px"></div>
+
+        <div id="detailBox" class="details-grid" style="margin-top:16px"></div>
+
+        <div style="margin-top:18px">
+          <button class="green" onclick="go('venue.html')">Book Another Seat</button>
+          <button class="gray" onclick="go('venue.html')">Back to Venues</button>
+        </div>
+      </div>
+    </main>
+
+    <aside class="side-panel">
+      <div class="card">
+        <h3>Tips</h3>
+        <p class="small">
+          Please arrive on time. If you do not show up within 15 minutes,
+          your seat may be released to other students.
+        </p>
+        <p class="small">
+          Remember to keep the area clean and respect quiet zones.
+        </p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:3000/api';
+
+function go(url){
+  window.location.href = url;
+}
+
+// 简单的时间格式化
+function formatTime(value){
+  if(!value) return 'Not set';
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return value;
+  return d.toLocaleString();
+}
+
+async function loadReservation(){
+  const statusBox = document.getElementById('statusBox');
+  const detailBox = document.getElementById('detailBox');
+
+  const id = localStorage.getItem('reservationId');
+
+  if(!id){
+    statusBox.innerHTML = '<p class="small" style="color:#d32f2f">No reservation found.</p>';
+    detailBox.innerHTML = '<p class="small">You can go back to the venues page and book a seat.</p>';
+    return;
+  }
+
+  try{
+    const res = await fetch(`${API_BASE}/reservations/${id}`);
+    if(!res.ok){
+      statusBox.innerHTML = '<p class="small" style="color:#d32f2f">Failed to load reservation from server.</p>';
+      return;
+    }
+
+    const data = await res.json();
+    const venue = data.venue || {};
+    const resource = data.resource || {};
+    const label = resource.label || ( (resource.row || '') + (resource.col || '') ) || ('ID ' + resource.id);
+
+    statusBox.innerHTML = `
+      <span class="badge">Reservation ID: ${data.id}</span>
+      <span class="badge" style="background:#e6f4ea;color:#1e7e34;margin-left:6px">${data.status || 'confirmed'}</span>
+    `;
+
+    detailBox.innerHTML = `
+      <div class="meta-row">
+        <span>Venue</span>
+        <span class="value">${venue.name || 'Unknown venue'}</span>
+      </div>
+      <div class="meta-row">
+        <span>Seat / Table</span>
+        <span class="value">${label}</span>
+      </div>
+      <div class="meta-row">
+        <span>Type</span>
+        <span class="small">${resource.type === 'table' ? 'Group table' : 'Single seat'}</span>
+      </div>
+      <div class="meta-row">
+        <span>Start time</span>
+        <span class="small">${formatTime(data.startTime)}</span>
+      </div>
+      <div class="meta-row">
+        <span>End time</span>
+        <span class="small">${formatTime(data.endTime)}</span>
+      </div>
+    `;
+  }catch(err){
+    console.error(err);
+    statusBox.innerHTML = '<p class="small" style="color:#d32f2f">Network error while loading reservation.</p>';
+  }
+}
+
+loadReservation();
+</script>
+</body>
+</html>
