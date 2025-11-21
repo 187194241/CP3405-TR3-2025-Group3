@@ -6,61 +6,50 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      background:#f6f8fc;
-      font-family:"Segoe UI",Roboto,sans-serif;
-    }
+    body { background:#f6f8fc; font-family:"Segoe UI",Roboto,sans-serif; }
     .seat {
-      display:inline-block;
-      width:36px;
-      height:36px;
+      display:inline-flex;
+      justify-content:center;
+      align-items:center;
+      width:40px;height:40px;
       margin:5px;
       border-radius:8px;
       border:1px solid #ccd6f6;
       background:#e8eefc;
       cursor:pointer;
+      font-size:14px;
       transition:all .2s;
     }
-    .seat:hover { background:#d9e5ff; }
-    .seat.selected { background:#34A853; color:white; }
-    .seat.occupied { background:#ea4335; color:white; cursor:not-allowed; }
+    .seat:hover { 
+      background:#d9e5ff; 
+    }
+    .seat.selected { 
+      background:#34A853;
+      color:white; 
+    }
+    .seat.occupied { 
+      background:#ea4335;
+      color:white;
+      cursor:not-allowed; 
+    }
 
-    /* Modal overlay */
+    /* Modal */
     .modal {
-      display:none;
-      position:fixed;
-      top:0;left:0;right:0;bottom:0;
-      background:rgba(0,0,0,0.45);
-      justify-content:center;
-      align-items:center;
-      z-index:1000;
+      display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+      background:rgba(0,0,0,0.45);justify-content:center;align-items:center;z-index:1000;
     }
     .modal-content {
-      background:#fff;
-      border-radius:12px;
-      width:420px;
-      padding:22px;
-      box-shadow:0 4px 20px rgba(0,0,0,0.25);
-      max-height:80vh;
-      overflow-y:auto;
+      background:#fff;padding:22px;border-radius:12px;width:420px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.25);max-height:80vh;overflow-y:auto;
     }
-    .modal-content h3 { margin-top:0;color:#0b69ff; }
-    .close-btn {
-      float:right;
-      cursor:pointer;
-      font-weight:bold;
-      color:#888;
-    }
+    .close-btn { float:right;cursor:pointer;font-weight:bold;color:#666; }
     .close-btn:hover { color:#000; }
   </style>
 </head>
-<body>
 
+<body>
 <header class="navbar">
-  <div class="brand">
-    <div class="logo">SS</div>
-    <div style="font-weight:600">SmartSeat</div>
-  </div>
+  <div class="brand"><div class="logo">SS</div><div style="font-weight:600">SmartSeat</div></div>
   <div class="nav-right">
     <a href="venue.html">Back</a>
     <a href="profile.html">Profile</a>
@@ -69,23 +58,22 @@
 
 <div class="container">
   <div class="grid">
+
     <main>
       <div class="card">
         <h2>Lecture Theatre 1 — Single Seats</h2>
+
         <div class="legend" style="margin-bottom:10px">
-        <div class="legend">
-        <div class="item"><span class="dot" style="background:#efefef;border-radius:4px;width:14px;height:14px;border:1px solid #ddd"></span> <span class="small">Available</span></div>
-        <div class="item"><span class="dot" style="background:#ea4335"></span> <span class="small">Occupied</span></div>
-        <div class="item"><span class="dot" style="background:#34A853"></span> <span class="small">Selected</span></div>
-        <div class="item"><span class="dot" style="background:#F6C85F"></span> <span class="small">Reserved</span></div>
-        </div>
+          <div class="item"><span class="dot" style="background:#efefef;border:1px solid #ddd;width:14px;height:14px"></span> Available</div>
+          <div class="item"><span class="dot" style="background:#ea4335;width:14px;height:14px"></span> Occupied</div>
+          <div class="item"><span class="dot" style="background:#34A853;width:14px;height:14px"></span> Selected</div>
+          <div class="item"><span class="dot" style="background:#F6C85F;width:14px;height:14px"></span> Reserved</div>
         </div>
 
         <div id="seat-map" style="margin-top:12px;text-align:center"></div>
 
-        <div style="margin-top:12px">
-          <button class="green" onclick="confirmSeat()">Confirm Selection</button>
-          <button class="gray" onclick="go('venue.html')">Back</button>
+        <div style="margin-top:16px;text-align:right">
+          <button id="confirmBtn" disabled style="padding:10px 18px;border-radius:8px;background:#0b69ff;color:white;border:none;opacity:.6">Confirm Selection</button>
         </div>
       </div>
     </main>
@@ -94,10 +82,12 @@
       <div class="card">
         <h3>Seat Info</h3>
         <div id="selected-info"><p class="small">No selection yet</p></div>
+
         <div style="margin-top:12px">
           <div class="meta-row"><span>Hold time</span><strong>10 min</strong></div>
           <div class="meta-row"><span>Policy</span><span class="small">No seat-hogging</span></div>
         </div>
+
         <div style="margin-top:12px;text-align:right">
           <button id="viewDetailsBtn" class="gray" style="display:none" onclick="openModal()">View Details</button>
         </div>
@@ -109,6 +99,7 @@
         <button class="gray" onclick="go('profile.html')">Edit Profile</button>
       </div>
     </aside>
+
   </div>
 </div>
 
@@ -126,32 +117,47 @@ const map = document.getElementById("seat-map");
 const info = document.getElementById("selected-info");
 const modal = document.getElementById("detailsModal");
 const detail = document.getElementById("detailContent");
-const btn = document.getElementById("viewDetailsBtn");
+const confirmBtn = document.getElementById("confirmBtn");
+const viewBtn = document.getElementById("viewDetailsBtn");
+
 let selectedSeat = null;
 
+// generate 48 seats
 for(let i=1;i<=48;i++){
-  const seat=document.createElement("div");
-  seat.className="seat";
-  if(Math.random()<0.15) seat.classList.add("occupied");
-  seat.addEventListener("click",()=>{
+  const seat = document.createElement("div");
+  seat.className = "seat";
+  seat.textContent = i;
+
+  if(Math.random()<0.15){
+    seat.classList.add("occupied");
+  }
+
+  seat.addEventListener("click", ()=>{
     if(seat.classList.contains("occupied")) return;
-    document.querySelectorAll(".seat").forEach(s=>s.classList.remove("selected"));
+
+    document.querySelectorAll(".seat").forEach(s => s.classList.remove("selected"));
     seat.classList.add("selected");
 
     selectedSeat = {
       id: i,
       row: String.fromCharCode(65 + Math.floor(i/8)),
-      col: (i%8)+1,
+      col: (i % 8) + 1,
       near: ["Aisle","Window","Center"][i%3],
       light: ["Bright","Normal","Dim"][Math.floor(Math.random()*3)],
-      power: Math.random()<0.7?"Yes":"No",
-      noise: ["Quiet","Moderate","Lively"][Math.floor(Math.random()*3)]
+      power: Math.random()<0.6 ? "Yes" : "No",
+      noise: ["Quiet","Moderate","Busy"][Math.floor(Math.random()*3)]
     };
 
-    info.innerHTML = `<p class="small">Selected seat: <strong>${selectedSeat.row}${selectedSeat.col}</strong></p>
-                      <p class="small">Near: ${selectedSeat.near} | Power: ${selectedSeat.power}</p>`;
-    btn.style.display="inline-block";
+    info.innerHTML = `
+      <p class='small'>Selected seat: <strong>${selectedSeat.row}${selectedSeat.col}</strong></p>
+      <p class='small'>Near: ${selectedSeat.near} | Power: ${selectedSeat.power}</p>
+    `;
+
+    viewBtn.style.display = "inline-block";
+    confirmBtn.disabled = false;
+    confirmBtn.style.opacity = 1;
   });
+
   map.appendChild(seat);
 }
 
@@ -165,25 +171,34 @@ function openModal(){
       <p><strong>Noise Level:</strong> ${selectedSeat.noise}</p>
       <hr>
       <p><strong>Previous Usage:</strong></p>
-      <ul style="margin-left:20px">
+      <ul style='margin-left:18px'>
         <li>12 Nov — Reserved by Alex Wong</li>
         <li>13 Nov — Available (No record)</li>
-      </ul>`;
+      </ul>
+    `;
     modal.style.display="flex";
   }
 }
 
 function closeModal(){ modal.style.display="none"; }
 
-function confirmSeat(){
-  if(selectedSeat){
-    alert(`Seat ${selectedSeat.row}${selectedSeat.col} confirmed.`);
-    localStorage.setItem("seat", selectedSeat.row+selectedSeat.col);
-    window.location.href="seatdetail.html";
-  } else {
-    alert("Please select a seat first.");
-  }
-}
+confirmBtn.addEventListener("click", ()=>{
+  if(!selectedSeat) return;
+
+  const record = {
+    venue: "Lecture Theatre 1",
+    seat: selectedSeat.row + selectedSeat.col,
+    time: new Date().toLocaleString()
+  };
+
+  let h = JSON.parse(localStorage.getItem("reservations") || "[]");
+  h.push(record);
+  localStorage.setItem("reservations", JSON.stringify(h));
+
+  alert(`Seat ${record.seat} confirmed.`);
+  window.location.href="seatdetail.html";
+});
 </script>
+
 </body>
 </html>

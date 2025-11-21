@@ -24,11 +24,12 @@
     <main>
       <div class="card">
         <h2>My Profile</h2>
+
         <div style="display:flex;gap:12px;align-items:center">
-          <div class="img-placeholder" style="width:120px;height:120px;border-radius:12px">[Avatar]</div>
+          <div class="img-placeholder" style="width:120px;height:120px;border-radius:12px">Avatar</div>
           <div>
-            <h3 id="userName">Alex Wong</h3>
-            <p class="small" id="userEmail">alex@university.edu</p>
+            <h3 id="userName">Student Name</h3>
+            <p class="small" id="userEmail">name@university.edu</p>
             <p class="small" id="userAccess">Accessibility needs: No</p>
             <div style="margin-top:8px">
               <button onclick="window.location.href='edit-profile.html'">Edit Profile</button>
@@ -40,7 +41,6 @@
         <div id="history-list" style="margin-top:10px"></div>
       </div>
 
-      <!-- New integrated features -->
       <div class="card" style="margin-top:20px">
         <h3>Accessibility Settings</h3>
         <label><input type="checkbox" id="wheelchair"> Require wheelchair access</label><br>
@@ -51,7 +51,7 @@
       <div class="card" style="margin-top:20px">
         <h3>System Settings</h3>
         <label><input type="checkbox" id="notify"> Receive booking notifications</label><br>
-        <label>Language: 
+        <label>Language:
           <select id="lang"><option>English</option><option>中文</option></select>
         </label><br>
         <button style="margin-top:10px" onclick="saveSystemSettings()">Save Settings</button>
@@ -83,30 +83,37 @@
 document.addEventListener("DOMContentLoaded", ()=>{
   const history = JSON.parse(localStorage.getItem("reservations") || "[]");
   const list = document.getElementById("history-list");
-  if (history.length===0) list.innerHTML = "<p class='small'>No reservations yet.</p>";
-  else {
+
+  if(history.length === 0){
+    list.innerHTML = "<p class='small'>No reservations yet.</p>";
+  } else {
     history.forEach((r,i)=>{
       const div=document.createElement("div");
       div.className="card small";
-      div.innerHTML=`<b>${r.venue}</b> — Seat ${r.seat}<br><span>${r.time}</span><br>
-      <button class='red' style='margin-top:5px' onclick='cancelBooking(${i})'>Cancel</button>`;
+      div.style.marginTop="8px";
+      div.innerHTML = `
+        <b>${r.venue}</b> — Seat ${r.seat}<br>
+        <span>${r.time}</span><br>
+        <button class='red' style='margin-top:5px' onclick='cancelBooking(${i})'>Cancel</button>
+      `;
       list.appendChild(div);
     });
   }
 });
+
 function cancelBooking(i){
   let h=JSON.parse(localStorage.getItem("reservations")||"[]");
-  if(confirm("Cancel this booking?")){
-    h.splice(i,1);
-    localStorage.setItem("reservations",JSON.stringify(h));
-    location.reload();
-  }
+  h.splice(i,1);
+  localStorage.setItem("reservations",JSON.stringify(h));
+  location.reload();
 }
+
 function logout(){
   localStorage.clear();
   alert("You have logged out.");
   window.location.href="index.html";
 }
+
 function saveAccessibility(){
   const prefs={
     wheelchair:document.getElementById('wheelchair').checked,
@@ -115,6 +122,7 @@ function saveAccessibility(){
   localStorage.setItem("accessPrefs",JSON.stringify(prefs));
   alert("Accessibility preferences saved!");
 }
+
 function saveSystemSettings(){
   const s={
     notify:document.getElementById('notify').checked,
@@ -124,5 +132,6 @@ function saveSystemSettings(){
   alert("System settings saved!");
 }
 </script>
+
 </body>
 </html>
